@@ -18,7 +18,6 @@ public class GameInput : MonoBehaviour
         //return new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         // new input system
         Vector2 inputVector = playerInputActions.Player.Move.ReadValue<Vector2>();
-        Debug.Log(inputVector);
         inputVector =  inputVector.normalized;
         return inputVector;
     }
