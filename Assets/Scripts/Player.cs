@@ -13,7 +13,10 @@ public class Player : MonoBehaviour
     void Update()
     {
         Vector2 playerMovement = gameInput.GetMovementVectorNormalized();
-        Vector3 moveDir = new Vector3(playerMovement.x, 0f, playerMovement.y).normalized;
+        Vector3 moveDir = new Vector3(playerMovement.x, 0f, playerMovement.y);
+
+
+
         transform.position += moveDir * Time.deltaTime * moveSpeed;
 
         //if (moveDir != Vector3.zero)

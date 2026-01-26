@@ -4,9 +4,22 @@ using UnityEngine;
 
 public class GameInput : MonoBehaviour
 {
+    private PlayerInputActions playerInputActions;
+
+    private void Awake()
+    {
+        playerInputActions = new PlayerInputActions();
+        playerInputActions.Player.Enable();
+    }
 
     public Vector2 GetMovementVectorNormalized()
     {
-        return new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        //// old input manager
+        //return new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        // new input system
+        Vector2 inputVector = playerInputActions.Player.Move.ReadValue<Vector2>();
+        Debug.Log(inputVector);
+        inputVector =  inputVector.normalized;
+        return inputVector;
     }
 }
