@@ -43,7 +43,10 @@ public class Player : MonoBehaviour
 
     private void GameInput_OnInteractAction(object sender, EventArgs e)
     {
-        selectedCounter?.Interact();
+        if (selectedCounter != null)
+        {
+            selectedCounter.Interact();
+        }
     }
 
     // Update is called once per frame
