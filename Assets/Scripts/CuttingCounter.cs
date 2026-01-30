@@ -4,16 +4,18 @@ using UnityEngine;
 
 public class CuttingCounter : BaseCounter
 {
-    [SerializeField] private KitchenObjectSO cutKitchenObjectSO;
+    [SerializeField] private CuttingRecipeSO[] cuttingRecipeSOArray;
 
     public override void Interact(Player player)
     {
-        // 基本拿取
-        if (player.HasKitchenObject() && !HasKitchenObject())
+        if (player.HasKitchenObject() && !HasKitchenObject()) // 拿
         {
-            player.GetKitchenObject().SetKitchenObjectParent(this);
+            if (HasRecipeWithInput(player.GetKitchenObject().GetKitchenObjectSO())) // 如果手上拿的是可切的才让放
+            {
+                player.GetKitchenObject().SetKitchenObjectParent(this);
+            }
         }
-        else if (!player.HasKitchenObject() && HasKitchenObject())
+        else if (!player.HasKitchenObject() && HasKitchenObject()) // 取
         {
             GetKitchenObject().SetKitchenObjectParent(player);
         }
@@ -22,10 +24,35 @@ public class CuttingCounter : BaseCounter
     {
         if (HasKitchenObject())
         {
-            // need to cut
-            GetKitchenObject().DestroySelf();
+            KitchenObjectSO outputKitchenObjectSO = GetOutputFromInput(GetKitchenObject().GetKitchenObjectSO());
 
-            KitchenObject.SpawnKitchenObject(cutKitchenObjectSO, this);
+            if (outputKitchenObjectSO != null) // CuttingCounter上放的是可切的才切
+            {
+                GetKitchenObject().DestroySelf();
+                KitchenObject.SpawnKitchenObject(outputKitchenObjectSO, this);
+            }
         }
+    }
+    private KitchenObjectSO GetOutputFromInput(KitchenObjectSO kitchenObjectSO)
+    {
+        foreach (var item in cuttingRecipeSOArray)
+        {
+            if (kitchenObjectSO == item.input)
+            {
+                return item.output;
+            }
+        }
+        return null;
+    }
+    private bool HasRecipeWithInput(KitchenObjectSO kitchenObjectSO)
+    {
+        foreach (var item in cuttingRecipeSOArray)
+        {
+            if (kitchenObjectSO == item.input)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
