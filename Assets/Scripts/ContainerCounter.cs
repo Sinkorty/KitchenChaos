@@ -12,21 +12,29 @@ public class ContainerCounter : BaseCounter
     {
         if (player.HasKitchenObject())
         {
-            // put it on the counter
-            KitchenObject kitchenObject = player.GetKitchenObject();
-            kitchenObject.SetKitchenObjectParent(this);
-        }
-        else if (HasKitchenObject())
-        {
-            GetKitchenObject().SetKitchenObjectParent(player);
+            if (!HasKitchenObject())
+            {
+                // put it on the counter
+                KitchenObject kitchenObject = player.GetKitchenObject();
+                kitchenObject.SetKitchenObjectParent(this);
+            }
         }
         else
         {
-            // spawn a corresponding ktichenObject
-            Transform kitchenObjectTransform = Instantiate(kitchenObjectSO.prefab);
-            // give it to player immediately
-            kitchenObjectTransform.GetComponent<KitchenObject>().SetKitchenObjectParent(player);
-            OnPlayerGrabbedObject?.Invoke(this, EventArgs.Empty);
+            if (HasKitchenObject())
+            {
+                GetKitchenObject().SetKitchenObjectParent(player);
+            }
+            else
+            {
+                //// spawn a corresponding ktichenObject
+                //Transform kitchenObjectTransform = Instantiate(kitchenObjectSO.prefab);
+                //// give it to player immediately
+                //kitchenObjectTransform.GetComponent<KitchenObject>().SetKitchenObjectParent(player);
+                KitchenObject.SpawnKitchenObject(kitchenObjectSO, player);
+
+                OnPlayerGrabbedObject?.Invoke(this, EventArgs.Empty);
+            }
         }
     }
 }

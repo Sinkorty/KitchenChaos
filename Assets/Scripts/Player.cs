@@ -41,6 +41,15 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     private void Start()
     {
         gameInput.OnInteractAction += GameInput_OnInteractAction;
+        gameInput.OnInteractAlternateAction += GameInput_OnInteractAlternateAction;
+    }
+
+    private void GameInput_OnInteractAlternateAction(object sender, EventArgs e)
+    {
+        if (selectedCounter != null)
+        {
+            selectedCounter.InteractAlternate(this);
+        }
     }
 
     private void GameInput_OnInteractAction(object sender, EventArgs e)
@@ -78,7 +87,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
         {
             // 尝试只在x轴上移动
             Vector3 moveDirX = new Vector3(playerMovement.x, 0f, 0f).normalized;
-            canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDirX, moveDistance);
+            canMove = moveDir.x != 0 &&!Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDirX, moveDistance);
             if (canMove)
             {
                 moveDir = moveDirX;
@@ -86,7 +95,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
             else // 尝试只在z轴上移动
             {
                 Vector3 moveDirZ = new Vector3(0f, 0f, playerMovement.y).normalized;
-                canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDirZ, moveDistance);
+                canMove = moveDir.z != 0 && !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDirZ, moveDistance);
                 if (canMove)
                 {
                     moveDir = moveDirZ;
@@ -105,13 +114,15 @@ public class Player : MonoBehaviour, IKitchenObjectParent
         //}
         isWalking = moveDir != Vector3.zero;
 
-        float rotateSpeed = 10f;
+        float rotateSpeed = 20f;
         transform.forward = Vector3.Slerp(transform.forward, moveDir, rotateSpeed * Time.deltaTime);
     }
     private void HandleInteractions()
     {
-        Vector2 inputVector = gameInput.GetMovementVectorNormalized();
-        Vector3 faceDir = new Vector3(inputVector.x, 0f, inputVector.y);
+        //Vector2 inputVector = gameInput.GetMovementVectorNormalized();
+        //Vector3 faceDir = new Vector3(inputVector.x, 0f, inputVector.y);
+
+        Vector3 faceDir = transform.forward;
 
         if (faceDir != Vector3.zero)
         {

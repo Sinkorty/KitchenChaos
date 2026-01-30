@@ -15,6 +15,10 @@ public class BaseCounter : MonoBehaviour, IKitchenObjectParent
     {
         throw new NotImplementedException("BaseCounter.Interact is not implemented");
     }
+    public virtual void InteractAlternate(Player player)
+    {
+        throw new NotImplementedException("BaseCounter.InteractAlternate is not implemented");
+    }
     public void SetKitchenObject(KitchenObject kitchenObject)
     {
         this.kitchenObject = kitchenObject;
@@ -32,5 +36,5 @@ public class BaseCounter : MonoBehaviour, IKitchenObjectParent
     public Transform GetKitchenObjectFollowTransform()
     {
         return counterTopPoint;
-    }
+    } 
 }
