@@ -3,15 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CuttingCounter : BaseCounter
+public class CuttingCounter : BaseCounter,IHasProgress
 {
     [SerializeField] private CuttingRecipeSO[] cuttingRecipeSOArray;
 
-    public event EventHandler<OnProgressChangedEvnetArgs> OnProgressChanged;
-    public class OnProgressChangedEvnetArgs : EventArgs
-    {
-        public float progressNormalized;
-    }
+    public event EventHandler<IHasProgress.OnProgressChangedEvnetArgs> OnProgressChanged;
     public event EventHandler OnCut;
 
 
@@ -28,7 +24,7 @@ public class CuttingCounter : BaseCounter
 
                 // 设置progress的visual事件调用（解耦）
                 CuttingRecipeSO cuttingRecipeSO = GetCuttingRecipeWithInput(GetKitchenObject().GetKitchenObjectSO());
-                OnProgressChanged?.Invoke(this, new OnProgressChangedEvnetArgs
+                OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEvnetArgs
                 {
                     progressNormalized = (float)cuttingProgress / cuttingRecipeSO.cuttingProgressMax,
                 });
@@ -57,7 +53,7 @@ public class CuttingCounter : BaseCounter
                 }
 
                 // NOTE: 视觉相关的代码就放在后面啦
-                OnProgressChanged?.Invoke(this, new OnProgressChangedEvnetArgs
+                OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEvnetArgs
                 {
                     progressNormalized = (float)cuttingProgress / cuttingRecipeSO.cuttingProgressMax,
                 });

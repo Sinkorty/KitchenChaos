@@ -17,7 +17,7 @@ public class BaseCounter : MonoBehaviour, IKitchenObjectParent
     }
     public virtual void InteractAlternate(Player player)
     {
-        throw new NotImplementedException("BaseCounter.InteractAlternate is not implemented");
+        //throw new NotImplementedException("BaseCounter.InteractAlternate is not implemented");
     }
     public void SetKitchenObject(KitchenObject kitchenObject)
     {
