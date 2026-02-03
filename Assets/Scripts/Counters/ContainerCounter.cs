@@ -18,6 +18,25 @@ public class ContainerCounter : BaseCounter
                 KitchenObject kitchenObject = player.GetKitchenObject();
                 kitchenObject.SetKitchenObjectParent(this);
             }
+            else
+            {
+                // 桌上有盘子，玩家拿食材
+                if (GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKitchenObject))
+                {
+                    if (plateKitchenObject.TryAddIngredient(player.GetKitchenObject().GetKitchenObjectSO()))
+                    {
+                        player.GetKitchenObject().DestroySelf();
+                    }
+                }
+                // 桌上有食材，玩家拿盘子
+                else if (player.GetKitchenObject().TryGetPlate(out plateKitchenObject))
+                {
+                    if (plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectSO()))
+                    {
+                        GetKitchenObject().DestroySelf();
+                    }
+                }
+            }
         }
         else
         {

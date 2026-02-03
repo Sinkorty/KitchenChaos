@@ -19,17 +19,59 @@ public class ClearCounter : BaseCounter
         //    // Give the kitchenObject to the player
         //    kitchenObject.SetKitchenObjectParent(player);
         //}
-        KitchenObject kitchenObject = GetKitchenObject();
+        //KitchenObject kitchenObject = GetKitchenObject();
 
-        if (kitchenObject == null && player.HasKitchenObject())
+        //if (kitchenObject == null && player.HasKitchenObject())
+        //{
+        //    // 放置
+        //    player.GetKitchenObject().SetKitchenObjectParent(this);
+        //}
+        //else if (kitchenObject != null && !player.HasKitchenObject())
+        //{
+        //    // 拾取
+        //    kitchenObject.SetKitchenObjectParent(player);
+        //}
+
+        if (!HasKitchenObject())
         {
-            // 放置
-            player.GetKitchenObject().SetKitchenObjectParent(this);
+            if (player.HasKitchenObject())
+            {
+                player.GetKitchenObject().SetKitchenObjectParent(this);
+            }
+            else
+            {
+
+            }
         }
-        else if (kitchenObject != null && !player.HasKitchenObject())
+        else
         {
-            // 拾取
-            kitchenObject.SetKitchenObjectParent(player);
+            if (player.HasKitchenObject())
+            {
+                // player carrying something
+                if (player.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKitchenObject))
+                {
+                    // player is holding a plate
+                    if (plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectSO()))
+                    {
+                        GetKitchenObject().DestroySelf();
+                    }
+                    
+                }
+                else
+                {
+                    if (GetKitchenObject().TryGetPlate(out plateKitchenObject))
+                    {
+                        if (plateKitchenObject.TryAddIngredient(player.GetKitchenObject().GetKitchenObjectSO()))
+                        {
+                            player.GetKitchenObject().DestroySelf();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                GetKitchenObject().SetKitchenObjectParent(player);
+            }
         }
     }
 }

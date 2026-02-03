@@ -107,12 +107,27 @@ public class StoveCounter : BaseCounter, IHasProgress
         else if (!player.HasKitchenObject() && HasKitchenObject()) // 取
         {
             GetKitchenObject().SetKitchenObjectParent(player);
+
             state = State.Idle;
             OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = state });
-
-
             sharedOnProgressChangedEventArgs.progressNormalized = 0f;
             OnProgressChanged?.Invoke(this, sharedOnProgressChangedEventArgs);
+        }
+        // 手上有盘子，桌上有菜
+        else if (player.HasKitchenObject() && HasKitchenObject())
+        {
+            if (player.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKitchenObject))
+            {
+                if (plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectSO()))
+                {
+                    GetKitchenObject().DestroySelf();
+
+                    state = State.Idle;
+                    OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = state });
+                    sharedOnProgressChangedEventArgs.progressNormalized = 0f;
+                    OnProgressChanged?.Invoke(this, sharedOnProgressChangedEventArgs);
+                }
+            }
         }
     }
 
