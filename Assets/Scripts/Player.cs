@@ -13,6 +13,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     //}
     public static Player Instance { get; private set; }
 
+    public event EventHandler OnPickedSomething;
 
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
     public class OnSelectedCounterChangedEventArgs : EventArgs
@@ -87,7 +88,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
         {
             // 尝试只在x轴上移动
             Vector3 moveDirX = new Vector3(playerMovement.x, 0f, 0f).normalized;
-            canMove = moveDir.x != 0 &&!Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDirX, moveDistance);
+            canMove = moveDir.x != 0 && !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDirX, moveDistance);
             if (canMove)
             {
                 moveDir = moveDirX;
@@ -158,6 +159,10 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     public void SetKitchenObject(KitchenObject kitchenObject)
     {
         this.kitchenObject = kitchenObject;
+        if (kitchenObject != null)
+        {
+            OnPickedSomething?.Invoke(this, EventArgs.Empty);
+        }
     }
     public KitchenObject GetKitchenObject()
     {
