@@ -5,12 +5,16 @@ using UnityEngine.UI;
 
 public class GamePauseUI : MonoBehaviour
 {
+    public static GamePauseUI Instance { get; private set; }
+
     [SerializeField] private Button mainMenuButton;
     [SerializeField] private Button resumeButton;
     [SerializeField] private Button optionButton;
 
     private void Awake()
     {
+        Instance = this;
+
         mainMenuButton.onClick.AddListener(() =>
         {
             Loader.Load(Loader.Scene.MainMenuScene);
@@ -22,6 +26,7 @@ public class GamePauseUI : MonoBehaviour
         optionButton.onClick.AddListener(() =>
         {
             OptionsUI.Instance.Show();
+            Hide();
         });
     }
     private void Start()
@@ -41,9 +46,10 @@ public class GamePauseUI : MonoBehaviour
         Show();
     }
 
-    private void Show()
+    public void Show()
     {
         gameObject.SetActive(true);
+        resumeButton.Select();
     }
     private void Hide()
     {

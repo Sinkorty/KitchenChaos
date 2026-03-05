@@ -91,6 +91,7 @@ public class OptionsUI : MonoBehaviour
     public void Show()
     {
         gameObject.SetActive(true);
+        soundEffectButton.Select();
     }
     private void Hide()
     {
