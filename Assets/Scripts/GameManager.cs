@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        print(state);
+        //print(state);
         if (state == State.WaitingToStart)
         {
             waitingToStartTimer -= Time.deltaTime;
