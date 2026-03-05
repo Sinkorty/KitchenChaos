@@ -9,7 +9,7 @@ public class PlateIconSingleUI : MonoBehaviour
 
     public void SetKitchenObjectSO(KitchenObjectSO kitchenObjectSO)
     {
-        print("Invoked£º" + kitchenObjectSO);
+        //print("Invoked£º" + kitchenObjectSO);
         image.sprite = kitchenObjectSO.sprite;
     }
 }

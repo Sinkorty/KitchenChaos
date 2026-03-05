@@ -7,6 +7,11 @@ public class CuttingCounter : BaseCounter,IHasProgress
 {
     public static event EventHandler OnAnyCut;
 
+    new public static void ResetStaticData()
+    {
+        OnAnyCut = null;
+    }
+
     [SerializeField] private CuttingRecipeSO[] cuttingRecipeSOArray;
 
     public event EventHandler<IHasProgress.OnProgressChangedEvnetArgs> OnProgressChanged;
@@ -72,6 +77,7 @@ public class CuttingCounter : BaseCounter,IHasProgress
 
                 OnCut?.Invoke(this, EventArgs.Empty);
                 OnAnyCut?.Invoke(this, EventArgs.Empty);
+                Debug.Log(OnAnyCut.GetInvocationList().Length);
             }
         }
     }
