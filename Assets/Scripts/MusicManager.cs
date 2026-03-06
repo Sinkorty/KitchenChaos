@@ -26,7 +26,7 @@ public class MusicManager : MonoBehaviour
             volumn = 0;
         }
         PlayerPrefs.SetFloat(PLAYER_PREFS_MUSIC_VOLUMN, volumn);
-        PlayerPrefs.Save();     
+        PlayerPrefs.Save();
     }
     public float GetVolumn() => volumn;
 }

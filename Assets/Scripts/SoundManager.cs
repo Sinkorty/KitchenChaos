@@ -70,9 +70,13 @@ public class SoundManager : MonoBehaviour
     {
         AudioSource.PlayClipAtPoint(audioClip, position, volumn * volumnMultiplier);
     }
-    public void PlayFootstepSound(Vector3 position, float volumn)
+    public void PlayFootstepSound(Vector3 position, float volumnMultiplier)
     {
-        PlaySound(audioClipRefsSO.footStep, position, volumn);
+        PlaySound(audioClipRefsSO.footStep, position, volumnMultiplier);
+    }
+    public void PlayCountdownSound(float volumnMultiplier = 1f)
+    {
+        PlaySound(audioClipRefsSO.warning, Vector3.zero, volumnMultiplier);
     }
     public void ChangeVolumn()
     {
@@ -85,4 +89,8 @@ public class SoundManager : MonoBehaviour
         PlayerPrefs.Save();
     }
     public float GetVolumn() => volumn;
+    public void PlayWarningSound(Vector3 position, float volumnMutiplier)
+    {
+        PlaySound(audioClipRefsSO.warning, position, volumnMutiplier);
+    }
 }

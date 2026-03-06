@@ -13,6 +13,7 @@ public class GameInput : MonoBehaviour
     public event EventHandler OnInteractAction;
     public event EventHandler OnInteractAlternateAction;
     public event EventHandler OnPauseAction;
+    public event EventHandler OnBindingRebind;
 
     public enum Binding
     {
@@ -93,7 +94,7 @@ public class GameInput : MonoBehaviour
                 throw new NotImplementedException();
         }
     }
-    public void RebindBinding(Binding binding, Action onActionRebound = null)
+    public void RebindBinding(Binding binding, Action onActionRebind = null)
     {
         InputAction inputAction = null;
         int bindingIndex = -1;
@@ -142,9 +143,9 @@ public class GameInput : MonoBehaviour
                 //Debug.Log(callback.action.bindings.Count);
                 callback.Dispose();
                 playerInputActions.Enable();
-                onActionRebound?.Invoke();
-
+                onActionRebind?.Invoke();
                 PlayerPrefs.SetString(PLAYER_PREFS_BINDING, playerInputActions.SaveBindingOverridesAsJson());
+                OnBindingRebind?.Invoke(this, EventArgs.Empty);
             })
             .Start();
     }
