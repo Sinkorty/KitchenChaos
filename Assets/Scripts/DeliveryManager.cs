@@ -94,7 +94,7 @@ public class DeliveryManager : NetworkBehaviour
         DeliverIncorrecctRecipeServerRpc();
         return false;
     }
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void DeliverCorrectRecipeServerRpc(int waitingRecipeSOListIndex)
     {
         DeliverCorrectRecipeClientRpc(waitingRecipeSOListIndex);
@@ -109,7 +109,7 @@ public class DeliveryManager : NetworkBehaviour
         OnRecipeCompleted?.Invoke(this, EventArgs.Empty);
         OnRecipeSuccess?.Invoke(this, EventArgs.Empty);
     }
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void DeliverIncorrecctRecipeServerRpc()
     {
         DeliverIncorrecctRecipeClientRpc();
