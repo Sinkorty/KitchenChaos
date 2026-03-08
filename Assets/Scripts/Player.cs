@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Player : MonoBehaviour, IKitchenObjectParent
+public class Player : NetworkBehaviour, IKitchenObjectParent
 {
     //public static Player instace;
     //public static Player GetPlayer() => instace;
@@ -11,7 +12,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     //{
     //    instace = player;
     //}
-    public static Player Instance { get; private set; }
+    //public static Player Instance { get; private set; }
 
     public event EventHandler OnPickedSomething;
 
@@ -22,7 +23,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     }
 
     [SerializeField] private float moveSpeed = 7f;
-    [SerializeField] private GameInput gameInput;
+    //[SerializeField] private GameInput gameInput;
     [SerializeField] private LayerMask counterLayerMask;
     [SerializeField] private Transform kitchenObjectHoldPoint;
 
@@ -33,16 +34,16 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
     private void Awake()
     {
-        if (Instance != null)
-        {
-            Debug.LogError("There is more than one Player instance");
-        }
-        Instance = this;
+        //if (Instance != null)
+        //{
+        //    Debug.LogError("There is more than one Player instance");
+        //}
+        //Instance = this;
     }
     private void Start()
     {
-        gameInput.OnInteractAction += GameInput_OnInteractAction;
-        gameInput.OnInteractAlternateAction += GameInput_OnInteractAlternateAction;
+        GameInput.Instance.OnInteractAction += GameInput_OnInteractAction;
+        GameInput.Instance.OnInteractAlternateAction += GameInput_OnInteractAlternateAction;
     }
 
     private void GameInput_OnInteractAlternateAction(object sender, EventArgs e)
@@ -66,6 +67,10 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     // Update is called once per frame
     private void Update()
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         HandleMovement();
         HandleInteractions();
     }
@@ -76,7 +81,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     }
     private void HandleMovement()
     {
-        Vector2 playerMovement = gameInput.GetMovementVectorNormalized();
+        Vector2 playerMovement = GameInput.Instance.GetMovementVectorNormalized();
         Vector3 moveDir = new Vector3(playerMovement.x, 0f, playerMovement.y);
 
         float moveDistance = moveSpeed * Time.deltaTime;
