@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class BaseCounter : MonoBehaviour, IKitchenObjectParent
+public class BaseCounter : NetworkBehaviour, IKitchenObjectParent
 {
     public static event EventHandler OnAnyObjectPlacecdHere;
     public static void ResetStaticData()
@@ -46,5 +47,11 @@ public class BaseCounter : MonoBehaviour, IKitchenObjectParent
     public Transform GetKitchenObjectFollowTransform()
     {
         return counterTopPoint;
+    }
+
+    public NetworkObject GetNetworkObject()
+    {
+        //Debug.LogError("Not impl");
+        return NetworkObject;
     }
 }
