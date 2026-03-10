@@ -15,7 +15,6 @@ public class StoveCounter : BaseCounter, IHasProgress
         Fried,
         Burned,
     }
-
     // 供StoveCounterVisual的事件
     public event EventHandler<OnStateChangedEventArgs> OnStateChanged;
     public class OnStateChangedEventArgs : EventArgs
@@ -137,7 +136,7 @@ public class StoveCounter : BaseCounter, IHasProgress
         }
     }
     [ServerRpc(RequireOwnership = false)]
-    private void ResetStateServerRpc()
+    private void SetStateIdleServerRpc()
     {
         state.Value = State.Idle;
     }
@@ -161,7 +160,7 @@ public class StoveCounter : BaseCounter, IHasProgress
             GetKitchenObject().SetKitchenObjectParent(player);
 
             //state.Value = State.Idle;
-            ResetStateServerRpc();
+            SetStateIdleServerRpc();
             OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = state.Value });
             //sharedOnProgressChangedEventArgs.progressNormalized = 0f;
             //OnProgressChanged?.Invoke(this, sharedOnProgressChangedEventArgs);
@@ -177,7 +176,7 @@ public class StoveCounter : BaseCounter, IHasProgress
                     KitchenObject.DestroyKitchenObject(GetKitchenObject());
 
                     //state.Value = State.Idle;
-                    ResetStateServerRpc();
+                    SetStateIdleServerRpc();
 
                     //OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = state.Value });
                     //sharedOnProgressChangedEventArgs.progressNormalized = 0f;
