@@ -58,6 +58,7 @@ public class KitchenObject : NetworkBehaviour
         //transform.parent = kitchenObjectParent.GetKitchenObjectFollowTransform();
         //transform.localPosition = Vector3.zero;
         followTransform.SetTargetTransfrom(kitchenObjectParent.GetKitchenObjectFollowTransform());
+        print("followTransform Invoked");
     }
 
     public void DestroySelf()
