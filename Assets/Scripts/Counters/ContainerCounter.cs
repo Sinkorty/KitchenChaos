@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class ContainerCounter : BaseCounter
@@ -52,8 +53,20 @@ public class ContainerCounter : BaseCounter
                 //kitchenObjectTransform.GetComponent<KitchenObject>().SetKitchenObjectParent(player);
                 KitchenObject.SpawnKitchenObject(kitchenObjectSO, player);
 
-                OnPlayerGrabbedObject?.Invoke(this, EventArgs.Empty);
+                InteractLogicServerRpc();
             }
         }
+    }
+
+    // 名字起的挺好听，说白了就是处理玩家从Container里拿物品时播放动画的Event调用
+    [ServerRpc(RequireOwnership = false)]
+    private void InteractLogicServerRpc()
+    {
+        InteractLogicClientRpc();
+    }
+    [ClientRpc]
+    private void InteractLogicClientRpc()
+    {
+        OnPlayerGrabbedObject?.Invoke(this, EventArgs.Empty);
     }
 }
