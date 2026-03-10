@@ -62,8 +62,12 @@ public class KitchenObject : NetworkBehaviour
 
     public void DestroySelf()
     {
-        kitchenObjectParent.ClearKitchenObject();
+        // Only destroy on server side
         Destroy(gameObject);
+    }
+    public void ClearKitchenObjectOnParent()
+    {
+        kitchenObjectParent.ClearKitchenObject();
     }
     public IKitchenObjectParent GetKitchenObjectParent()
     {
@@ -71,7 +75,7 @@ public class KitchenObject : NetworkBehaviour
     }
     public bool TryGetPlate(out PlateKitchenObject plateKitchenObject)
     {
-        if(this is PlateKitchenObject)
+        if (this is PlateKitchenObject)
         {
             plateKitchenObject = this as PlateKitchenObject;
             return true;
@@ -85,5 +89,8 @@ public class KitchenObject : NetworkBehaviour
     {
         KitchenGameMultiplayer.Instance.SpawnKitchenObject(kitchenObjectSO, kitchenObjectParent);
     }
-
+    public static void DestroyKitchenObject(KitchenObject kitchenObjectSO)
+    {
+        KitchenGameMultiplayer.Instance.DestroyKitchenObject(kitchenObjectSO);
+    }
 }
