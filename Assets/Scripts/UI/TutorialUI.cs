@@ -17,8 +17,17 @@ public class TutorialUI : MonoBehaviour
     {
         GameInput.Instance.OnBindingRebind += GameInput_OnBindingRebind;
         GameManager.Instance.OnStateChanged += GameManager_OnStateChanged;
-        //Show();
-        Hide();
+        GameManager.Instance.OnLocalPlayerReadyChanged += GameManager_OnLocalPlayerReadyChanged;
+        Show();
+        //Hide();
+    }
+
+    private void GameManager_OnLocalPlayerReadyChanged(object sender, System.EventArgs e)
+    {
+        if (GameManager.Instance.IsLocalPlayerReady())
+        {
+            Hide();
+        }
     }
 
     private void GameManager_OnStateChanged(object sender, System.EventArgs e)
