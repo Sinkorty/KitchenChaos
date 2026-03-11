@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class KitchenGameMultiplayer : NetworkBehaviour
 {
+
     private const int MAX_PLAYER_AMOUNT = 4;
 
     public static KitchenGameMultiplayer Instance { get; private set; }
@@ -15,17 +16,36 @@ public class KitchenGameMultiplayer : NetworkBehaviour
 
     public event EventHandler OnTryingToJoinGame;
     public event EventHandler OnFailedToJoinGame;
+    public event EventHandler OnPlayerDataNetworkListChanged;
+
+    private NetworkList<PlayerData> playerDataNetworkList;
 
     private void Awake()
     {
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        playerDataNetworkList = new NetworkList<PlayerData>();
+        playerDataNetworkList.OnListChanged += PlayerDataNetworkList_OnListChanged;
+    }
+
+    private void PlayerDataNetworkList_OnListChanged(NetworkListEvent<PlayerData> changeEvent)
+    {
+        OnPlayerDataNetworkListChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public void StartHost()
     {
         NetworkManager.Singleton.ConnectionApprovalCallback += NetworkManager_ConnectionApprovalCallback;
+        NetworkManager.Singleton.OnClientConnectedCallback += NetworkManager_OnClientConnectedCallback;
         NetworkManager.Singleton.StartHost();
+    }
+
+    private void NetworkManager_OnClientConnectedCallback(ulong clientId)
+    {
+        playerDataNetworkList.Add(new PlayerData
+        {
+            clientId = clientId,
+        });
     }
 
     // 其他客户端想连接此NetworkManager前会进入该回调吗，只有Server进入该回调
@@ -122,5 +142,14 @@ public class KitchenGameMultiplayer : NetworkBehaviour
         kitchenObjectNetworkObjectReference.TryGet(out NetworkObject kitchenObjectNetworkObject);
         KitchenObject kitchenObject = kitchenObjectNetworkObject.GetComponent<KitchenObject>();
         kitchenObject.ClearKitchenObjectOnParent();
+    }
+
+    public bool IsPlayerIndexConnected(int playerIndex)
+    {
+        return playerIndex < playerDataNetworkList.Count;
+    }
+    public PlayerData GetPlayerDataFromPlayerIndex(int playerIndex)
+    {
+        return playerDataNetworkList[playerIndex];
     }
 }
