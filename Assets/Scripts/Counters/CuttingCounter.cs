@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class CuttingCounter : BaseCounter,IHasProgress
+public class CuttingCounter : BaseCounter, IHasProgress
 {
     public static event EventHandler OnAnyCut;
 
@@ -37,7 +37,7 @@ public class CuttingCounter : BaseCounter,IHasProgress
         {
             GetKitchenObject().SetKitchenObjectParent(player);
         }
-        else if(player.HasKitchenObject() && HasKitchenObject())
+        else if (player.HasKitchenObject() && HasKitchenObject())
         {
             if (player.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKitchenObject)) // 手上有盘子，桌上有菜
             {
@@ -49,7 +49,7 @@ public class CuttingCounter : BaseCounter,IHasProgress
             }
         }
     }
-    [ServerRpc(RequireOwnership =false)]
+    [ServerRpc(RequireOwnership = false)]
     private void InteractLogicPlaceObjectOnCounterServerRpc()
     {
         InteractLogicPlaceObjectOnCounterClientRpc();
@@ -70,10 +70,13 @@ public class CuttingCounter : BaseCounter,IHasProgress
     {
         if (HasKitchenObject())
         {
-            CutObjectServerRpc();
+            if (HasRecipeWithInput(GetKitchenObject().GetKitchenObjectSO()))
+            {
+                CutObjectServerRpc();
+            }
         }
     }
-    [ServerRpc(RequireOwnership =false)]
+    [ServerRpc(RequireOwnership = false)]
     private void CutObjectServerRpc()
     {
         CutObjectClientRpc();
@@ -100,10 +103,11 @@ public class CuttingCounter : BaseCounter,IHasProgress
             Debug.Log(OnAnyCut.GetInvocationList().Length);
         }
     }
-    [ServerRpc(RequireOwnership =false)]
+    [ServerRpc(RequireOwnership = false)]
     private void TestCuttingProgressDoneServerRpc()
     {
         CuttingRecipeSO cuttingRecipeSO = GetCuttingRecipeWithInput(GetKitchenObject().GetKitchenObjectSO());
+        print(cuttingRecipeSO);
         if (cuttingProgress >= cuttingRecipeSO.cuttingProgressMax)
         {
             //GetKitchenObject().DestroySelf();

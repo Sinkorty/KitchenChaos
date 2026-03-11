@@ -3,13 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class KitchenGameMultiplayer : NetworkBehaviour
 {
+    private const int MAX_PLAYER_AMOUNT = 4;
+
     public static KitchenGameMultiplayer Instance { get; private set; }
 
     [SerializeField] private KitchenObjectListSO kitchenObjectListSO;
 
+    public event EventHandler OnTryingToJoinGame;
+    public event EventHandler OnFailedToJoinGame;
 
     private void Awake()
     {
@@ -23,27 +28,39 @@ public class KitchenGameMultiplayer : NetworkBehaviour
         NetworkManager.Singleton.StartHost();
     }
 
-    // 其他客户端想连接此NetworkManager前会进入该回调
+    // 其他客户端想连接此NetworkManager前会进入该回调吗，只有Server进入该回调
     private void NetworkManager_ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest request,
         NetworkManager.ConnectionApprovalResponse response)
     {
+        // 手工打回
+        if (SceneManager.GetActiveScene().name != Loader.Scene.CharacterSelectScene.ToString())
+        {
+            response.Approved = false;
+            response.Reason = "game has already started.";
+            return;
+        }
+        if (NetworkManager.Singleton.ConnectedClientsIds.Count > MAX_PLAYER_AMOUNT)
+        {
+            response.Approved = false;
+            response.Reason = "game is full";
+            return;
+        }
         response.Approved = true;
-        //if (GameManager.Instance.IsWaitingToStart())
-        //{
-        //    response.Approved = true;
-        //    response.CreatePlayerObject = true;
-        //}
-        //else
-        //{
-        //    response.Approved = false;
-        //    response.CreatePlayerObject = false;
-        //}
     }
 
     public void StartClient()
     {
+        OnTryingToJoinGame?.Invoke(this, EventArgs.Empty);
+
+        NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_OnClientDisconnectCallback;
         NetworkManager.Singleton.StartClient();
     }
+
+    private void NetworkManager_OnClientDisconnectCallback(ulong obj)
+    {
+        OnFailedToJoinGame?.Invoke(this, EventArgs.Empty);
+    }
+
     /// <summary>
     /// Multiplayer的最终SpawnKitchenObject的解决方案
     /// </summary>
