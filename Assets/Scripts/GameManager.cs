@@ -34,6 +34,7 @@ public class GameManager : NetworkBehaviour
 
     private Dictionary<ulong, bool> playerReadyDictionary; // 只在Server/Host那是全的，所有Client发现这里是空的
     private Dictionary<ulong, bool> playerPauseDictionary; // 只在Server/Host那是全的，所有Client发现这里是空的
+    private bool autoTestGamePauseState;
 
     private void Awake()
     {
@@ -46,7 +47,19 @@ public class GameManager : NetworkBehaviour
     {
         state.OnValueChanged += State_OnValueChanged;
         isGamePause.OnValueChanged += IsGamePause_OnValueChanged;
+
+        if (IsServer)
+        {
+            NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_OnClientDisconnectCallback;
+        }
     }
+
+    private void NetworkManager_OnClientDisconnectCallback(ulong clientId)
+    {
+        // 不直接调用TestGamePauseState()是因为在这个回调当中，是因为这个回调执行在玩家退出失去连接之前
+        autoTestGamePauseState = true;
+    }
+
     private void State_OnValueChanged(State _, State newState)
     {
         OnStateChanged?.Invoke(this, EventArgs.Empty);
@@ -140,6 +153,14 @@ public class GameManager : NetworkBehaviour
             }
         }
     }
+    private void LateUpdate()
+    {
+        if (autoTestGamePauseState)
+        {
+            autoTestGamePauseState = false;
+            TestGamePauseState();
+        }
+    }
     public bool IsGamePlaying()
     {
         return state.Value == State.GamePlaying;
@@ -155,6 +176,10 @@ public class GameManager : NetworkBehaviour
     public bool IsLocalPlayerReady()
     {
         return isLocalPlayerReady;
+    }
+    public bool IsWaitingToStart()
+    {
+        return state.Value == State.WaitingToStart;
     }
 
     public float GetCountdownToStartTimer() { return countdownToStartTimer.Value; }
