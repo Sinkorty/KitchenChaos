@@ -36,6 +36,8 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     [SerializeField] private Transform kitchenObjectHoldPoint;
     [SerializeField] private List<Vector3> spawnPositionList;
 
+    [SerializeField] private PlayerVisual playerVisual;
+
     private bool isWalking;
     private Vector3 lastInteractDir;
     private BaseCounter selectedCounter;
@@ -45,6 +47,9 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     {
         GameInput.Instance.OnInteractAction += GameInput_OnInteractAction;
         GameInput.Instance.OnInteractAlternateAction += GameInput_OnInteractAlternateAction;
+
+        PlayerData playerData = KitchenGameMultiplayer.Instance.GetPlayerDataFromClientId(OwnerClientId);
+        playerVisual.SetPlayerColor(KitchenGameMultiplayer.Instance.GetPlayerColor(playerData.colorId));
     }
     public override void OnNetworkSpawn()
     {
@@ -53,7 +58,10 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
             LocalInstance = this;
         }
         // TODO: 即将优化
-        transform.position = spawnPositionList[(int)OwnerClientId];
+        //transform.position = spawnPositionList[(int)OwnerClientId];
+        int spawnPositionIndex = KitchenGameMultiplayer.Instance.GetPlayerIndexFromClientId(OwnerClientId);
+        print(spawnPositionIndex);
+        transform.position = spawnPositionList[spawnPositionIndex];
 
         OnAnyPlayerSpawned?.Invoke(this, EventArgs.Empty);
 
@@ -67,7 +75,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     private void NetworkManager_OnClientDisconnectCallback(ulong clientId)
     {
         // 终于懂了
-        if(clientId == OwnerClientId && HasKitchenObject())
+        if (clientId == OwnerClientId && HasKitchenObject())
         {
             KitchenObject.DestroyKitchenObject(GetKitchenObject());
         }

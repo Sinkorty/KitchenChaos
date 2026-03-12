@@ -20,6 +20,10 @@ public class HostDisconnectedUI : MonoBehaviour
         NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_OnClientDisconnectCallback;
         Hide();
     }
+    private void OnDestroy()
+    {
+        NetworkManager.Singleton.OnClientDisconnectCallback -= NetworkManager_OnClientDisconnectCallback;
+    }
 
     private void NetworkManager_OnClientDisconnectCallback(ulong clientId)
     {
